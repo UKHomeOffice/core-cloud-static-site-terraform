@@ -1,12 +1,12 @@
 resource "aws_s3_bucket" "static_site" {
-  for_each = toset(local.ss_dirs)
-  bucket   = "cc-static-site-${var.tenant_vars.product}-${var.tenant_vars.component}"
+  for_each = toset(var.tenant_vars)
+  bucket   = "cc-static-site-${each.value.product}-${each.value.component}"
 
   tags = local.common_tags
 }
 
 resource "aws_s3_bucket_public_access_block" "static_site_acl" {
-  for_each = toset(local.ss_dirs)
+  for_each = toset(var.tenant_vars)
   bucket   = aws_s3_bucket.static_site.id
 
   block_public_acls       = true
@@ -16,7 +16,7 @@ resource "aws_s3_bucket_public_access_block" "static_site_acl" {
 }
 
 resource "aws_s3_bucket_versioning" "static_site_versioning" {
-  for_each = toset(local.ss_dirs)
+  for_each = toset(var.tenant_vars)
   bucket   = aws_s3_bucket.static_site.id
   versioning_configuration {
     status = "Enabled"
@@ -24,7 +24,7 @@ resource "aws_s3_bucket_versioning" "static_site_versioning" {
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "static_site_encryption" {
-  for_each = toset(local.ss_dirs)
+  for_each = toset(var.tenant_vars)
   bucket   = aws_s3_bucket.static_site.id
   rule {
     apply_server_side_encryption_by_default {
@@ -78,7 +78,7 @@ data "aws_iam_policy_document" "static_site_iam_storage_policy_document" {
 }
 
 resource "aws_s3_bucket_policy" "static_site_policy" {
-  for_each   = toset(local.ss_dirs)
+  for_each   = toset(var.tenant_vars)
   bucket     = aws_s3_bucket.static_site.id
   policy     = data.aws_iam_policy_document.static_site_iam_storage_policy_document.json
   depends_on = [aws_s3_bucket_public_access_block.static_site_acl]

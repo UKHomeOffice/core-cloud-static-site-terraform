@@ -5,8 +5,8 @@ locals {
 }
 
 resource "aws_iam_role" "static_site_actions_push" {
-  for_each           = toset(local.ss_dirs)
-  name               = "cc-static-site-${var.tenant_vars.product}-${var.tenant_vars.component}"
+  for_each           = toset(var.tenant_vars)
+  name               = "cc-static-site-${each.value.product}-${each.value.component}"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -19,7 +19,7 @@ resource "aws_iam_role" "static_site_actions_push" {
         }
         Condition = {
           StringLike = {
-            "token.actions.githubusercontent.com:sub" : "repo:${var.tenant_vars.repository}:environment:${var.tenant_vars.github_environment_name}"
+            "token.actions.githubusercontent.com:sub" : "repo:${each.value.repository}:environment:${each.value.github_environment_name}"
             "sts:RoleSessionName" : "GitHubActions"
           }
           StringEquals = {
@@ -34,19 +34,19 @@ resource "aws_iam_role" "static_site_actions_push" {
 
 
 resource "aws_iam_role_policy_attachment" "static_site_policy_attachment" {
-for_each     = toset(local.ss_dirs)
+  for_each   = toset(var.tenant_vars)
   policy_arn = aws_iam_policy.static_site_policy.arn
   role       = aws_iam_role.static_site_actions_push.name
 }
 
 resource "aws_iam_policy" "static_site_policy" {
-  for_each = toset(local.ss_dirs)
+  for_each = toset(var.tenant_vars)
   name     = "static-site-iam-policy"
   policy   = data.aws_iam_policy_document.static_site_policy_document.json
 }
 
 data "aws_iam_policy_document" "static_site_policy_document" {
-  for_each = toset(local.ss_dirs)
+  for_each = toset(var.tenant_vars)
   statement {
     sid = "WriteToBucket"
 

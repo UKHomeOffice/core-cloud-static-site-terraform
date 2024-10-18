@@ -1,7 +1,7 @@
 resource "aws_cloudfront_origin_access_control" "static_site_identity" {
-  for_each                          = toset(local.ss_dirs)
-  name                              = "cc-static-site-${var.tenant_vars.product}-${var.tenant_vars.component}"
-  description                       = "Origin access control for ${var.tenant_vars.product} ${var.tenant_vars.component}"
+  for_each                          = toset(var.tenant_vars)
+  name                              = "cc-static-site-${each.value.product}-${each.value.component}"
+  description                       = "Origin access control for ${each.value.product} ${each.value.component}"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"
@@ -17,7 +17,7 @@ resource "aws_cloudfront_distribution" "static_site_distribution" {
 
   enabled             = true
   is_ipv6_enabled     = true
-  comment             = "Cloudfront distribution for ${var.tenant_vars.product} ${var.tenant_vars.component}"
+  comment             = "Cloudfront distribution for ${each.value.product} ${each.value.component}"
   default_root_object = "index.html"
 
   # logging_config {
@@ -26,7 +26,7 @@ resource "aws_cloudfront_distribution" "static_site_distribution" {
   #   prefix          = "myprefix"
   # }
 
-  aliases = var.tenant_vars.cloudfront_aliases
+  aliases = each.value.cloudfront_aliases
 
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
@@ -48,7 +48,7 @@ resource "aws_cloudfront_distribution" "static_site_distribution" {
 
     function_association {
       event_type   = "viewer-request"
-      function_arn = var.tenant_vars.cloudfront_function_rewrite_arn
+      function_arn = each.value.cloudfront_function_rewrite_arn
     }
 
   }
@@ -72,7 +72,7 @@ resource "aws_cloudfront_distribution" "static_site_distribution" {
   tags = local.common_tags
 
   viewer_certificate {
-    acm_certificate_arn            = var.tenant_vars.cloudfront_cert
+    acm_certificate_arn            = each.value.cloudfront_cert
     minimum_protocol_version       = "TLSv1.2_2021"
     cloudfront_default_certificate = "false"
     ssl_support_method             = "sni-only"

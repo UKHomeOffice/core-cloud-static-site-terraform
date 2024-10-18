@@ -1,5 +1,5 @@
 resource "aws_wafv2_web_acl" "default" {
-  for_each    = toset(local.ss_dirs)
+  for_each    = toset(var.tenant_vars)
   name        = "cc-static-site-${var.tenant_vars.product}-${var.tenant_vars.component}"
   description = "Static Site WAF rule for ${var.tenant_vars.product} ${var.tenant_vars.component}"
   scope       = "CLOUDFRONT"

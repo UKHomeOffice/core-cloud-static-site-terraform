@@ -5,7 +5,8 @@ locals {
 }
 
 resource "aws_iam_role" "static_site_actions_push" {
-  name = "cc-static-site-${var.tenant_vars.product}-${var.tenant_vars.component}"
+  for_each           = toset(local.ss_dirs)
+  name               = "cc-static-site-${var.tenant_vars.product}-${var.tenant_vars.component}"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -33,16 +34,19 @@ resource "aws_iam_role" "static_site_actions_push" {
 
 
 resource "aws_iam_role_policy_attachment" "static_site_policy_attachment" {
+for_each     = toset(local.ss_dirs)
   policy_arn = aws_iam_policy.static_site_policy.arn
   role       = aws_iam_role.static_site_actions_push.name
 }
 
 resource "aws_iam_policy" "static_site_policy" {
-  name   = "static-site-iam-policy"
-  policy = data.aws_iam_policy_document.static_site_policy_document.json
+  for_each = toset(local.ss_dirs)
+  name     = "static-site-iam-policy"
+  policy   = data.aws_iam_policy_document.static_site_policy_document.json
 }
 
 data "aws_iam_policy_document" "static_site_policy_document" {
+  for_each = toset(local.ss_dirs)
   statement {
     sid = "WriteToBucket"
 

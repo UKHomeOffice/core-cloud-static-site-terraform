@@ -1,4 +1,5 @@
 resource "aws_cloudfront_origin_access_control" "static_site_identity" {
+  for_each                          = toset(local.ss_dirs)
   name                              = "cc-static-site-${var.tenant_vars.product}-${var.tenant_vars.component}"
   description                       = "Origin access control for ${var.tenant_vars.product} ${var.tenant_vars.component}"
   origin_access_control_origin_type = "s3"
@@ -7,6 +8,7 @@ resource "aws_cloudfront_origin_access_control" "static_site_identity" {
 }
 
 resource "aws_cloudfront_distribution" "static_site_distribution" {
+  for_each                   = toset(local.ss_dirs)
   origin {
     domain_name              = aws_s3_bucket.static_site.bucket_regional_domain_name
     origin_id                = aws_s3_bucket.static_site.id

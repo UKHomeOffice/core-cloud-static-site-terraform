@@ -1,12 +1,14 @@
 resource "aws_kms_key" "static_site_kms" {
+  for_each            = toset(local.ss_dirs)
   enable_key_rotation = true
   tags                = local.common_tags
 }
 
 
 resource "aws_kms_key_policy" "static_site_kms_policy" {
-  key_id = aws_kms_key.static_site_kms.id
-  policy = jsonencode({
+  for_each = toset(local.ss_dirs)
+  key_id   = aws_kms_key.static_site_kms.id
+  policy   = jsonencode({
     "Version" : "2012-10-17",
     "Id" : "static_site_kms_policy",
     "Statement" : [
@@ -42,7 +44,7 @@ resource "aws_kms_key_policy" "static_site_kms_policy" {
 }
 
 resource "aws_kms_alias" "static_site_kms_alias" {
+  for_each      = toset(local.ss_dirs)
   name          = "alias/static_site/${aws_s3_bucket.static_site.id}"
   target_key_id = aws_kms_key.static_site_kms.key_id
 }
-

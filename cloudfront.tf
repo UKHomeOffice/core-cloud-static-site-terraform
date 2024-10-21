@@ -1,21 +1,23 @@
 resource "aws_cloudfront_origin_access_control" "static_site_identity" {
-  name                              = "cc-static-site-${var.tenant_vars.product}-${var.tenant_vars.component}"
-  description                       = "Origin access control for ${var.tenant_vars.product} ${var.tenant_vars.component}"
+  for_each                          = toset(var.tenant_vars)
+  name                              = "cc-static-site-${each.value.product}-${each.value.component}"
+  description                       = "Origin access control for ${each.value.product} ${each.value.component}"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"
 }
 
 resource "aws_cloudfront_distribution" "static_site_distribution" {
+  for_each                   = toset(var.tenant_vars)
   origin {
-    domain_name              = aws_s3_bucket.static_site.bucket_regional_domain_name
-    origin_id                = aws_s3_bucket.static_site.id
-    origin_access_control_id = aws_cloudfront_origin_access_control.static_site_identity.id
+    domain_name              = aws_s3_bucket.static_site[each.key].bucket_regional_domain_name
+    origin_id                = aws_s3_bucket.static_site[each.key].id
+    origin_access_control_id = aws_cloudfront_origin_access_control.static_site_identity[each.key].id
   }
 
   enabled             = true
   is_ipv6_enabled     = true
-  comment             = "Cloudfront distribution for ${var.tenant_vars.product} ${var.tenant_vars.component}"
+  comment             = "Cloudfront distribution for ${each.value.product} ${each.value.component}"
   default_root_object = "index.html"
 
   # logging_config {
@@ -24,12 +26,12 @@ resource "aws_cloudfront_distribution" "static_site_distribution" {
   #   prefix          = "myprefix"
   # }
 
-  aliases = var.tenant_vars.cloudfront_aliases
+  aliases = each.value.cloudfront_aliases
 
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods   = ["GET", "HEAD"]
-    target_origin_id = aws_s3_bucket.static_site.id
+    target_origin_id = aws_s3_bucket.static_site[each.key].id
 
     forwarded_values {
       query_string = false
@@ -46,7 +48,7 @@ resource "aws_cloudfront_distribution" "static_site_distribution" {
 
     function_association {
       event_type   = "viewer-request"
-      function_arn = var.tenant_vars.cloudfront_function_rewrite_arn
+      function_arn = each.value.cloudfront_function_rewrite_arn
     }
 
   }
@@ -70,10 +72,10 @@ resource "aws_cloudfront_distribution" "static_site_distribution" {
   tags = local.common_tags
 
   viewer_certificate {
-    acm_certificate_arn            = var.tenant_vars.cloudfront_cert
+    acm_certificate_arn            = each.value.cloudfront_cert
     minimum_protocol_version       = "TLSv1.2_2021"
     cloudfront_default_certificate = "false"
     ssl_support_method             = "sni-only"
   }
-  web_acl_id = aws_wafv2_web_acl.default.arn
+  web_acl_id = aws_wafv2_web_acl.default[each.key].arn
 }

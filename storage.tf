@@ -37,6 +37,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "static_site_encry
 
 
 data "aws_iam_policy_document" "static_site_iam_storage_policy_document" {
+  for_each = toset(var.tenant_vars)
   statement {
     sid    = "AllowCloudFrontServicePrincipalReadOnly"
     effect = "Allow"

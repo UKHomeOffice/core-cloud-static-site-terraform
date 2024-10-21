@@ -35,8 +35,8 @@ resource "aws_iam_role" "static_site_actions_push" {
 
 resource "aws_iam_role_policy_attachment" "static_site_policy_attachment" {
   for_each   = toset(var.tenant_vars)
-  policy_arn = aws_iam_policy.static_site_policy.arn
-  role       = aws_iam_role.static_site_actions_push.name
+  policy_arn = aws_iam_policy.static_site_policy[each.key].arn
+  role       = aws_iam_role.static_site_actions_push[each.key].name
 }
 
 resource "aws_iam_policy" "static_site_policy" {

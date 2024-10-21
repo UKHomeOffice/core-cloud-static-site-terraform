@@ -80,7 +80,7 @@ data "aws_iam_policy_document" "static_site_iam_storage_policy_document" {
 
 resource "aws_s3_bucket_policy" "static_site_policy" {
   for_each   = toset(var.tenant_vars)
-  bucket     = aws_s3_bucket.static_site.id
-  policy     = data.aws_iam_policy_document.static_site_iam_storage_policy_document.json
+  bucket     = aws_s3_bucket.static_site[each.key].id
+  policy     = data.aws_iam_policy_document.static_site_iam_storage_policy_document[each.key].json
   depends_on = [aws_s3_bucket_public_access_block.static_site_acl]
 }

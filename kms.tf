@@ -7,7 +7,7 @@ resource "aws_kms_key" "static_site_kms" {
 
 resource "aws_kms_key_policy" "static_site_kms_policy" {
   for_each = toset(var.tenant_vars)
-  key_id   = aws_kms_key.static_site_kms.id
+  key_id   = aws_kms_key.static_site_kms[each.key].id
   policy   = jsonencode({
     "Version" : "2012-10-17",
     "Id" : "static_site_kms_policy",
@@ -35,7 +35,7 @@ resource "aws_kms_key_policy" "static_site_kms_policy" {
         "Resource" : "*",
         "Condition" : {
           "StringEquals" : {
-            "aws:SourceArn" : aws_cloudfront_distribution.static_site_distribution.arn
+            "aws:SourceArn" : aws_cloudfront_distribution.static_site_distribution[each.key].arn
           }
         }
       }

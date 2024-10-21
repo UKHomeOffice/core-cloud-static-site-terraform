@@ -48,12 +48,12 @@ data "aws_iam_policy_document" "static_site_iam_storage_policy_document" {
       "s3:GetObject"
     ]
     resources = [
-      "arn:aws:s3:::${aws_s3_bucket.static_site.id}/*"
+      "arn:aws:s3:::${aws_s3_bucket.static_site[each.key].id}/*"
     ]
     condition {
       test     = "StringEquals"
       variable = "aws:SourceArn"
-      values   = [aws_cloudfront_distribution.static_site_distribution.arn]
+      values   = [aws_cloudfront_distribution.static_site_distribution[each.key].arn]
     }
   }
   statement {
@@ -67,12 +67,12 @@ data "aws_iam_policy_document" "static_site_iam_storage_policy_document" {
       "s3:ListBucket"
     ]
     resources = [
-      "arn:aws:s3:::${aws_s3_bucket.static_site.id}"
+      "arn:aws:s3:::${aws_s3_bucket.static_site[each.key].id}"
     ]
     condition {
       test     = "StringEquals"
       variable = "aws:SourceArn"
-      values   = [aws_cloudfront_distribution.static_site_distribution.arn]
+      values   = [aws_cloudfront_distribution.static_site_distribution[each.key].arn]
     }
   }
 }

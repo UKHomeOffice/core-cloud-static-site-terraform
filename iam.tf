@@ -77,8 +77,8 @@ data "aws_iam_policy_document" "static_site_policy_document" {
     ]
 
     resources = [
-      "arn:aws:s3:::${aws_s3_bucket.static_site.id}",
-      "arn:aws:s3:::${aws_s3_bucket.static_site.id}/*"
+      "arn:aws:s3:::${aws_s3_bucket.static_site[each.key].id}",
+      "arn:aws:s3:::${aws_s3_bucket.static_site[each.key].id}/*"
     ]
   }
   statement {
@@ -97,7 +97,7 @@ data "aws_iam_policy_document" "static_site_policy_document" {
     ]
 
     resources = [
-      aws_kms_key.static_site_kms.arn,
+      aws_kms_key.static_site_kms[each.key].arn,
     ]
   }
   statement {
@@ -108,7 +108,7 @@ data "aws_iam_policy_document" "static_site_policy_document" {
     ]
 
     resources = [
-      aws_cloudfront_distribution.static_site_distribution.arn,
+      aws_cloudfront_distribution.static_site_distribution[each.key].arn,
     ]
   }
 }

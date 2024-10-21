@@ -1,7 +1,6 @@
 output "s3_bucket_name" {
-  for_each    = toset(var.tenant_vars)
   description = "Output the name of the bucket to use in deployment"
-  value       = aws_s3_bucket.static_site[each.key].id
+  value       = values(aws_s3_bucket.static_site)[*].id
 }
 
 output "cloudfront_distribution_domain_name" {

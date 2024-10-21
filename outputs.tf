@@ -1,6 +1,6 @@
 output "s3_bucket_name" {
   description = "Output the name of the bucket to use in deployment"
-  value       = aws_s3_bucket.static_site.id
+  value       = aws_s3_bucket.static_site[each.key].id
 }
 
 output "cloudfront_distribution_domain_name" {

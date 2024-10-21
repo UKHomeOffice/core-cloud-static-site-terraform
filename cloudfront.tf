@@ -8,11 +8,11 @@ resource "aws_cloudfront_origin_access_control" "static_site_identity" {
 }
 
 resource "aws_cloudfront_distribution" "static_site_distribution" {
-  for_each                   = toset(local.ss_dirs)
+  for_each                   = toset(var.tenant_vars)
   origin {
-    domain_name              = aws_s3_bucket.static_site.bucket_regional_domain_name
-    origin_id                = aws_s3_bucket.static_site.id
-    origin_access_control_id = aws_cloudfront_origin_access_control.static_site_identity.id
+    domain_name              = aws_s3_bucket.static_site[each.key].bucket_regional_domain_name
+    origin_id                = aws_s3_bucket.static_site[each.key].id
+    origin_access_control_id = aws_cloudfront_origin_access_control[each.key].static_site_identity.id
   }
 
   enabled             = true
@@ -31,7 +31,7 @@ resource "aws_cloudfront_distribution" "static_site_distribution" {
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods   = ["GET", "HEAD"]
-    target_origin_id = aws_s3_bucket.static_site.id
+    target_origin_id = aws_s3_bucket.static_site[each.key].id
 
     forwarded_values {
       query_string = false
@@ -77,5 +77,5 @@ resource "aws_cloudfront_distribution" "static_site_distribution" {
     cloudfront_default_certificate = "false"
     ssl_support_method             = "sni-only"
   }
-  web_acl_id = aws_wafv2_web_acl.default.arn
+  web_acl_id = aws_wafv2_web_acl.default[each.key].arn
 }

@@ -7,7 +7,7 @@ resource "aws_s3_bucket" "static_site" {
 
 resource "aws_s3_bucket_public_access_block" "static_site_acl" {
   for_each = toset(var.tenant_vars)
-  bucket   = aws_s3_bucket.static_site.id
+  bucket   = aws_s3_bucket.static_site[each.key].id
 
   block_public_acls       = true
   block_public_policy     = true
@@ -17,7 +17,7 @@ resource "aws_s3_bucket_public_access_block" "static_site_acl" {
 
 resource "aws_s3_bucket_versioning" "static_site_versioning" {
   for_each = toset(var.tenant_vars)
-  bucket   = aws_s3_bucket.static_site.id
+  bucket   = aws_s3_bucket.static_site[each.key].id
   versioning_configuration {
     status = "Enabled"
   }
@@ -25,10 +25,10 @@ resource "aws_s3_bucket_versioning" "static_site_versioning" {
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "static_site_encryption" {
   for_each = toset(var.tenant_vars)
-  bucket   = aws_s3_bucket.static_site.id
+  bucket   = aws_s3_bucket.static_site[each.key].id
   rule {
     apply_server_side_encryption_by_default {
-      kms_master_key_id = aws_kms_key.static_site_kms.arn
+      kms_master_key_id = aws_kms_key.static_site_kms[each.key].arn
       sse_algorithm     = "aws:kms"
     }
     bucket_key_enabled = true

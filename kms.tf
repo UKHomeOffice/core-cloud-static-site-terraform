@@ -45,6 +45,6 @@ resource "aws_kms_key_policy" "static_site_kms_policy" {
 
 resource "aws_kms_alias" "static_site_kms_alias" {
   for_each      = toset(var.tenant_vars)
-  name          = "alias/static_site/${aws_s3_bucket.static_site.id}"
-  target_key_id = aws_kms_key.static_site_kms.key_id
+  name          = "alias/static_site/${aws_s3_bucket.static_site[each.key].id}"
+  target_key_id = aws_kms_key.static_site_kms[each.key].key_id
 }

@@ -12,7 +12,7 @@ resource "aws_cloudfront_distribution" "static_site_distribution" {
   origin {
     domain_name              = aws_s3_bucket.static_site[each.key].bucket_regional_domain_name
     origin_id                = aws_s3_bucket.static_site[each.key].id
-    origin_access_control_id = aws_cloudfront_origin_access_control[each.key].static_site_identity.id
+    origin_access_control_id = aws_cloudfront_origin_access_control.static_site_identity[each.key].id
   }
 
   enabled             = true

@@ -7,3 +7,10 @@ locals {
     COMPONENT   = var.tenant_vars.component
   }
 }
+
+required_providers {
+  aws = {
+    source = "hashicorp/aws"
+    configuration_aliases = [ aws.us-east-1 ]
+  }
+}

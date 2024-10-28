@@ -5,7 +5,8 @@ locals {
 }
 
 resource "aws_iam_role" "static_site_actions_push" {
-  name = "cc-static-site-${var.tenant_vars.product}-${var.tenant_vars.component}"
+  for_each           = toset(var.tenant_vars)
+  name               = "cc-static-site-${each.value.product}-${each.value.component}"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -18,7 +19,7 @@ resource "aws_iam_role" "static_site_actions_push" {
         }
         Condition = {
           StringLike = {
-            "token.actions.githubusercontent.com:sub" : "repo:${var.tenant_vars.repository}:environment:${var.tenant_vars.github_environment_name}"
+            "token.actions.githubusercontent.com:sub" : "repo:${each.value.repository}:environment:${each.value.github_environment_name}"
             "sts:RoleSessionName" : "GitHubActions"
           }
           StringEquals = {
@@ -33,16 +34,19 @@ resource "aws_iam_role" "static_site_actions_push" {
 
 
 resource "aws_iam_role_policy_attachment" "static_site_policy_attachment" {
-  policy_arn = aws_iam_policy.static_site_policy.arn
-  role       = aws_iam_role.static_site_actions_push.name
+  for_each   = toset(var.tenant_vars)
+  policy_arn = aws_iam_policy.static_site_policy[each.key].arn
+  role       = aws_iam_role.static_site_actions_push[each.key].name
 }
 
 resource "aws_iam_policy" "static_site_policy" {
-  name   = "static-site-iam-policy"
-  policy = data.aws_iam_policy_document.static_site_policy_document.json
+  for_each = toset(var.tenant_vars)
+  name     = "static-site-iam-policy"
+  policy   = data.aws_iam_policy_document.static_site_policy_document[each.key].json
 }
 
 data "aws_iam_policy_document" "static_site_policy_document" {
+  for_each = toset(var.tenant_vars)
   statement {
     sid = "WriteToBucket"
 
@@ -73,8 +77,8 @@ data "aws_iam_policy_document" "static_site_policy_document" {
     ]
 
     resources = [
-      "arn:aws:s3:::${aws_s3_bucket.static_site.id}",
-      "arn:aws:s3:::${aws_s3_bucket.static_site.id}/*"
+      "arn:aws:s3:::${aws_s3_bucket.static_site[each.key].id}",
+      "arn:aws:s3:::${aws_s3_bucket.static_site[each.key].id}/*"
     ]
   }
   statement {
@@ -93,7 +97,7 @@ data "aws_iam_policy_document" "static_site_policy_document" {
     ]
 
     resources = [
-      aws_kms_key.static_site_kms.arn,
+      aws_kms_key.static_site_kms[each.key].arn,
     ]
   }
   statement {
@@ -104,7 +108,7 @@ data "aws_iam_policy_document" "static_site_policy_document" {
     ]
 
     resources = [
-      aws_cloudfront_distribution.static_site_distribution.arn,
+      aws_cloudfront_distribution.static_site_distribution[each.key].arn,
     ]
   }
 }

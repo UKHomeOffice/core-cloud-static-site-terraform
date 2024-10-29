@@ -3,6 +3,7 @@
 This terraform module is used to create AWS resources for each individual static site.
 
 ## External Links
+https://github.com/UKHomeOffice/core-cloud-static-site-terragrunt
 https://collaboration.homeoffice.gov.uk/display/CORE/Core+Cloud+Static+Sites
 https://collaboration.homeoffice.gov.uk/display/CORE/Static+Sites+Repositories
 

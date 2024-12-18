@@ -11,7 +11,7 @@ resource "aws_wafv2_web_acl" "default" {
   }
 
   rule {
-    name     = "AWSManagedRulesCommonRuleSet"
+    name     = "AWSManaged-CommonRule"
     priority = 1
 
     override_action {
@@ -27,7 +27,7 @@ resource "aws_wafv2_web_acl" "default" {
 
     visibility_config {
       cloudwatch_metrics_enabled = false
-      metric_name                = "static-site-${var.tenant_vars.product}-${var.tenant_vars.component}-AWSManagedRulesCommonRuleSet-metric"
+      metric_name                = "static-site-${var.tenant_vars.product}-${var.tenant_vars.component}-AWSManagedCommonRuleSet-metric"
       sampled_requests_enabled   = false
     }
   }

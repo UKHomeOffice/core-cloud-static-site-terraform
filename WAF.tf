@@ -27,11 +27,11 @@ resource "aws_wafv2_web_acl" "default" {
 
     visibility_config {
       cloudwatch_metrics_enabled = false
-      metric_name                = "static-site-${var.tenant_vars.product}-${var.tenant_vars.component}"
+      metric_name                = "static-site-${var.tenant_vars.product}-${var.tenant_vars.component}-AWSManagedRulesCommonRuleSet-metric"
       sampled_requests_enabled   = false
     }
   }
-  
+
   visibility_config {
     cloudwatch_metrics_enabled = false
     metric_name                = "static-site-${var.tenant_vars.product}-${var.tenant_vars.component}"

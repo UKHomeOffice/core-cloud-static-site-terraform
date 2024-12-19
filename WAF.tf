@@ -37,4 +37,5 @@ resource "aws_wafv2_web_acl" "default" {
     metric_name                = "static-site-${var.tenant_vars.product}-${var.tenant_vars.component}"
     sampled_requests_enabled   = false
   }
+  
 }

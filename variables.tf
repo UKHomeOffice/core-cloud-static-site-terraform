@@ -13,6 +13,11 @@ variable "tenant_vars" {
     cloudfront_aliases              = string
     cloudfront_cert                 = string
     cloudfront_function_rewrite_arn = string
+
+    #required for naming of resources
+    #e.g. "cc-static-site-${var.tenant_vars.product}-${var.tenant_vars.component}"
+    component                       = string
+    product                         = string
   })
 }
 

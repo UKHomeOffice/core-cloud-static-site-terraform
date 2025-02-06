@@ -10,7 +10,7 @@ variable "tenant_vars" {
     # other attributes, required for cloudfront creation
     repository                      = string
     github_environment_name         = string
-    cloudfront_aliases              = list
+    cloudfront_aliases              = list(string)
     cloudfront_cert                 = string
     cloudfront_function_rewrite_arn = string
 

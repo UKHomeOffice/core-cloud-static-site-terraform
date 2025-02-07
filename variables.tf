@@ -1,3 +1,8 @@
+variable "waf_arn" {
+  type = string
+  description = "ARN of the waf to be attached to the cloudfront."
+}
+
 variable "tenant_vars" {
   type = object({
     # enforced tags, all required attributes for costing and ID

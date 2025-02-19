@@ -75,5 +75,5 @@ resource "aws_cloudfront_distribution" "static_site_distribution" {
     cloudfront_default_certificate = "false"
     ssl_support_method             = "sni-only"
   }
-  web_acl_id = var.waf_arn
+  web_acl_id = var.waf_acl_id
 }

@@ -1,4 +1,4 @@
-variable "waf_arn" {
+variable "waf_acl_id" {
   type = string
   description = "ARN of the waf to be attached to the cloudfront."
 }

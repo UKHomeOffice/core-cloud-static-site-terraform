@@ -1,3 +1,8 @@
+variable "waf_acl_id" {
+  type = string
+  description = "ARN of the waf to be attached to the cloudfront."
+}
+
 variable "tenant_vars" {
   type = object({
     # enforced tags, all required attributes for costing and ID
@@ -10,7 +15,7 @@ variable "tenant_vars" {
     # other attributes, required for cloudfront creation
     repository                      = string
     github_environment_name         = string
-    cloudfront_aliases              = list
+    cloudfront_aliases              = list(string)
     cloudfront_cert                 = string
     cloudfront_function_rewrite_arn = string
 

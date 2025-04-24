@@ -1,0 +1,13 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: core-cloud-static-site-terraform
+  description: A repo for creating AWS resources for each individual static site.
+  annotations:
+    github.com/project-slug: UKHomeOffice/core-cloud-static-site-terraform
+spec:
+  type: service
+  owner: core-cloud-devops
+  lifecycle: experimental
+  system: core-cloud
+  

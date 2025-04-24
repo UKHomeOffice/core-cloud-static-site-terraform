@@ -46,7 +46,7 @@ resource "aws_cloudfront_distribution" "static_site_distribution" {
 
     function_association {
       event_type   = "viewer-request"
-      function_arn = var.tenant_vars.cloudfront_function_rewrite_arn
+      function_arn = var.cloudfront_function_rewrite_arn
     }
 
   }

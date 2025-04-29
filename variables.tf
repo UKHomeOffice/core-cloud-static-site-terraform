@@ -17,13 +17,17 @@ variable "tenant_vars" {
     github_environment_name         = string
     cloudfront_aliases              = list(string)
     cloudfront_cert                 = string
-    cloudfront_function_rewrite_arn = string
 
     #required for naming of resources
     #e.g. "cc-static-site-${var.tenant_vars.product}-${var.tenant_vars.component}"
     component                       = string
     product                         = string
   })
+}
+
+variable "cloudfront_function_rewrite_arn" {
+  type        = string
+  description = ARN for the Cloudfront function
 }
 
 variable "cloud_front_default_vars" {

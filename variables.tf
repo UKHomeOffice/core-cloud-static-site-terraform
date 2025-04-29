@@ -27,7 +27,7 @@ variable "tenant_vars" {
 
 variable "cloudfront_function_rewrite_arn" {
   type        = string
-  description = ARN for the Cloudfront function
+  description = "ARN for the Cloudfront function"
 }
 
 variable "cloud_front_default_vars" {
